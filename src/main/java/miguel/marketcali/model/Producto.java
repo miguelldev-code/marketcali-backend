@@ -4,15 +4,15 @@ public class Producto {
 
     private int id;
     private String nombre;
-    private String marcar;
+    private String marca;
     private double precio;
     private int cantidad;
     private String categoria;
 
     // constructor
-    public Producto(String nombre, String marcar, double precio, int cantidad, String categoria) {
+    public Producto(String nombre, String marca, double precio, int cantidad, String categoria) {
         this.nombre = nombre;
-        this.marcar = marcar;
+        this.marca = marca;
         this.precio = precio;
         this.cantidad = cantidad;
         this.categoria = categoria;
@@ -35,12 +35,12 @@ public class Producto {
         this.nombre = nombre;
     }
 
-    public String getMarcar() {
-        return marcar;
+    public String getMarca() {
+        return marca;
     }
 
-    public void setMarcar(String marcar) {
-        this.marcar = marcar;
+    public void setMarca(String marca) {
+        this.marca = marca;
     }
 
     public double getPrecio() {
