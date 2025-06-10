@@ -19,7 +19,7 @@ public class ConexionDB {
         }
     }
 
-    // Establecer conexion 
+    // Establecer conexion
     public static Connection getConnection() throws SQLException {
         String url = prop.getProperty("db.url");
         String user = prop.getProperty("db.user");
