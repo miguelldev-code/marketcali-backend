@@ -1,15 +1,32 @@
 package miguel.marketcali.model;
 
-public class Producto {
+import jakarta.persistence.*;
 
-    private int id;
+@Entity
+@Table(name = "productos")
+public class Producto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 100)
     private String nombre;
+
+    @Column(length = 50)
     private String marca;
+
+    @Column(nullable = false)
     private double precio;
+
     private int cantidad;
+
+    @Column(length = 50)
     private String categoria;
 
-    // constructor
+    // Required no-arg constructor
+    public Producto() {
+    }
+
     public Producto(String nombre, String marca, double precio, int cantidad, String categoria) {
         this.nombre = nombre;
         this.marca = marca;
@@ -18,12 +35,12 @@ public class Producto {
         this.categoria = categoria;
     }
 
-    // getters y setters
-    public int getId() {
+    // Getters and setters
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
