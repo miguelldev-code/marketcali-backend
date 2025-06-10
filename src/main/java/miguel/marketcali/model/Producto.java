@@ -18,6 +18,16 @@ public class Producto {
         this.categoria = categoria;
     }
 
+    // Constructor (con ID)
+    public Producto(int id, String nombre, String marca, double precio, int cantidad, String categoria) {
+        this.id = id;
+        this.nombre = nombre;
+        this.marca = marca;
+        this.precio = precio;
+        this.cantidad = cantidad;
+        this.categoria = categoria;
+    }
+
     // getters y setters
     public int getId() {
         return id;

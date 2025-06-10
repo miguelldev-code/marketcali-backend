@@ -7,26 +7,23 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConexionDB {
-    private static Connection conexion = null;
+    private static Properties prop = null;
 
-    public static Connection getConnection() {
-        if (conexion == null) {
-            try{
-                // Configuracion enlazada al propierties
-                Properties prop = new Properties();
-                prop.load(ConexionDB.class.getResourceAsStream("/config.properties"));
-
-                String url = prop.getProperty("db.url");
-                String user = prop.getProperty("db.user");
-                String password = prop.getProperty("db.password");
-
-                conexion = DriverManager.getConnection(url, user, password);
-
-            } catch (SQLException | IOException e) {
-                e.printStackTrace();
-            }
-
+    // Conexion obteniendo datos de propierties
+    static {
+        try {
+            prop = new Properties();
+            prop.load(ConexionDB.class.getResourceAsStream("/config.properties"));
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading configuration file", e);
         }
-        return conexion;
+    }
+
+    // Establecer conexion
+    public static Connection getConnection() throws SQLException {
+        String url = prop.getProperty("db.url");
+        String user = prop.getProperty("db.user");
+        String password = prop.getProperty("db.password");
+        return DriverManager.getConnection(url, user, password);
     }
 }
