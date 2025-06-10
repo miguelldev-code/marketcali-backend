@@ -1,28 +1,42 @@
 package miguel;
-import miguel.marketcali.dao.ProductoDAO;
+
 import miguel.marketcali.model.Producto;
+import miguel.marketcali.repository.ProductoRepository;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
-import java.sql.SQLException;
-
+@SpringBootApplication
 public class Main {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
+        SpringApplication.run(Main.class, args);
+    }
 
-        ProductoDAO dao = new ProductoDAO();
+    @Bean
+    public CommandLineRunner demo(ProductoRepository repository) {
+        return (args) -> {
+            // Create product
+            Producto nuevo = new Producto("Laptop", "Dell", 2500000, 10, "Tecnología");
+            repository.save(nuevo);
+            System.out.println("Producto creado");
 
-        // Crear producto
-        Producto nuevo = new Producto("Laptop", "Dell", 2500000, 10, "Tecnología");
-        dao.insertarProducto(nuevo);
+            // Query product
+            Producto consultado = repository.findById(1L).orElse(null);
+            if (consultado != null) {
+                System.out.println("Producto encontrado: " + consultado.getNombre());
 
-        // Consultar producto
-        Producto consultado = dao.consultarProducto(1);
-        System.out.println("Producto: " + consultado.getNombre());
+                // Update product
+                consultado.setPrecio(2300000);
+                repository.save(consultado);
+                System.out.println("Producto actualizado");
 
-        // Actualizar producto
-        consultado.setPrecio(2300000);
-        dao.actualizarProducto(consultado);
-
-        // Eliminar producto
-        dao.eliminarProducto(1);
-
+                // Delete product
+                repository.deleteById(1L);
+                System.out.println("Producto eliminado");
+            } else {
+                System.out.println("Producto no encontrado");
+            }
+        };
     }
 }
