@@ -7,11 +7,10 @@ public class ProductoDAO {
 
     // Insertar producto
     public void insertarProducto(Producto producto) throws SQLException {
-        // comando SQL
         String sql = "INSERT INTO producto (nombre, marca, precio, cantidad, categoria) VALUES (?,?,?,?,?)";
 
-        try(Connection con = ConexionDB.getConnection();
-            PreparedStatement stat = con.prepareStatement(sql)){
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement stat = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stat.setString(1, producto.getNombre());
             stat.setString(2, producto.getMarca());
@@ -20,27 +19,34 @@ public class ProductoDAO {
             stat.setString(5, producto.getCategoria());
 
             stat.executeUpdate();
+
+            // Generar ID
+            try (ResultSet rs = stat.getGeneratedKeys()) {
+                if (rs.next()) {
+                    producto.setId(rs.getInt(1));
+                }
+            }
         }
     }
 
     // Consultar producto por ID
     public Producto consultarProducto(int id) throws SQLException {
-        // comando SQL
         String sql = "SELECT * FROM producto WHERE id = ?";
-        try(Connection con = ConexionDB.getConnection();
-        PreparedStatement stat = con.prepareStatement(sql)){
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement stat = con.prepareStatement(sql)) {
 
             stat.setInt(1, id);
-            ResultSet rs = stat.executeQuery();
-
-            if(rs.next()){
-                return new Producto(
-                        rs.getString("nombre"),
-                        rs.getString("marca"),
-                        rs.getDouble("precio"),
-                        rs.getInt("cantidad"),
-                        rs.getString("categoria")
-                );
+            try (ResultSet rs = stat.executeQuery()) {
+                if (rs.next()) {
+                    return new Producto(
+                            rs.getInt("id"), // Get ID from results
+                            rs.getString("nombre"),
+                            rs.getString("marca"),
+                            rs.getDouble("precio"),
+                            rs.getInt("cantidad"),
+                            rs.getString("categoria")
+                    );
+                }
             }
         }
         return null;
@@ -48,11 +54,10 @@ public class ProductoDAO {
 
     // Actualizar producto
     public void actualizarProducto(Producto producto) throws SQLException {
-        // codigo SQL
-        String sql = "UPDATE Productos SET nombre=?, marca=?, precio=?, cantidad=?, categoria=? WHERE id = ?";
+        String sql = "UPDATE producto SET nombre=?, marca=?, precio=?, cantidad=?, categoria=? WHERE id = ?";
 
-        try(Connection con = ConexionDB.getConnection();
-        PreparedStatement stat = con.prepareStatement(sql)){
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement stat = con.prepareStatement(sql)) {
 
             stat.setString(1, producto.getNombre());
             stat.setString(2, producto.getMarca());
