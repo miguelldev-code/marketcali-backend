@@ -1,11 +1,20 @@
 package miguel.marketcali.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Data // Genera getters, setters, toString, etc.
 @Table(name = "productos")
 public class Producto {
+
+    // Getters and setters
+    @Setter
+    @Getter
     @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -23,10 +32,18 @@ public class Producto {
     @Column(length = 50)
     private String categoria;
 
-    // Required no-arg constructor
+    // FALTA IMPLEMENTAR ESTOS ATRIBUTOS AL SERVICE
+    @Column(length = 500)
+    private String descripcion;
+
+    @Column(length = 255)
+    private String imagen;
+
+    // Constructor no-arg
     public Producto() {
     }
 
+    // Constructor arg
     public Producto(String nombre, String marca, double precio, int cantidad, String categoria) {
         this.nombre = nombre;
         this.marca = marca;
@@ -35,52 +52,4 @@ public class Producto {
         this.categoria = categoria;
     }
 
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getMarca() {
-        return marca;
-    }
-
-    public void setMarca(String marca) {
-        this.marca = marca;
-    }
-
-    public double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
-
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
 }
