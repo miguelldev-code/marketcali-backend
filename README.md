@@ -100,10 +100,4 @@ Asegúrate de tener configuradas las variables de entorno para la conexión a la
 ## Autores y Colaboradores
 Miguel Ángel Ortiz Escobar
 
-Proyecto SENA – Analisis y Desarrollo de software 
-Instructor: Diego Alexander Campiño Toro
-
-## Licencia
-Este proyecto está bajo la licencia MIT. Consulta el archivo LICENSE para más información.
-
 ```
