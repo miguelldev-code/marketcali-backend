@@ -15,17 +15,9 @@ public class ProductoService {
     @Autowired
     private ProductoRepository productoRepository;
 
-    // Listar con filtros
-    public List<Producto> listarFiltrados(String categoria, String marca) {
-        if (categoria != null && marca != null) {
-            return productoRepository.findByCategoriaAndMarca(categoria, marca);
-        } else if (categoria != null) {
-            return productoRepository.findByCategoria(categoria);
-        } else if (marca != null) {
-            return productoRepository.findByMarca(marca);
-        } else {
-            return productoRepository.findAll();
-        }
+    // Listar productos
+    public List<Producto> listarTodos() {
+        return productoRepository.findAll();
     }
 
     // Buscar por ID
