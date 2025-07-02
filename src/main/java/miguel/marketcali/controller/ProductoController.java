@@ -21,24 +21,8 @@ public class ProductoController {
 
     // GET: Listar todos (público)
     @GetMapping
-    public ResponseEntity<List<Producto>> listarProductos(
-            @RequestParam(required = false) String categoria,
-            @RequestParam(required = false) String marca) {
-        return ResponseEntity.ok(
-                productoService.listarFiltrados(categoria, marca)
-        );
-    }
-
-    // GET: Listar todas las categorías únicas
-    @GetMapping("/categorias")
-    public ResponseEntity<List<String>> listarCategorias() {
-        return ResponseEntity.ok(productoService.listarCategoriasUnicas());
-    }
-
-    // GET: Listar todas las marcas únicas
-    @GetMapping("/marcas")
-    public ResponseEntity<List<String>> listarMarcas() {
-        return ResponseEntity.ok(productoService.listarMarcasUnicas());
+    public ResponseEntity<List<Producto>> listarProductos() {
+        return ResponseEntity.ok(productoService.listarTodos());
     }
 
     // GET: Buscar por ID (público)
@@ -49,7 +33,6 @@ public class ProductoController {
 
     // POST: Crear (solo ADMIN)
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Producto> crearProducto(
             @Valid @RequestBody ProductoDTO productoDTO) {
         return new ResponseEntity<>(
@@ -60,7 +43,6 @@ public class ProductoController {
 
     // PUT: Actualizar (solo ADMIN)
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Producto> actualizarProducto(
             @PathVariable Long id,
             @Valid @RequestBody ProductoDTO productoDTO) {
@@ -71,7 +53,6 @@ public class ProductoController {
 
     // DELETE: Eliminar (solo ADMIN)
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminarProducto(@PathVariable Long id) {
         productoService.eliminarProducto(id);
         return ResponseEntity.noContent().build();
