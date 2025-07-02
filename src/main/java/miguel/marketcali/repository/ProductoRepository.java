@@ -7,9 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
-    List<Producto> findByCategoria(String categoria);
-    List<Producto> findByMarca(String marca);
-    List<Producto> findByCategoriaAndMarca(String categoria, String marca);
 
     // NO IMPLEMENTADO EN REACT
     // Filtros de categorias y marcas
