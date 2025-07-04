@@ -7,9 +7,9 @@ Sistema de gestión administrativa para supermercados con funcionalidades de ven
 ## Tecnologías
 
 - **Frontend:** React, Boostrap, React Router
-- **Backend:** Spring Boot (Pendiente)
-- **Base de datos:** PostgreSQL o MySQL (Pendiente)
-- **Otros:** Docker (opcional), Lector de códigos de barras (integración futura)
+- **Backend:** Spring Boot 
+- **Base de datos:** MySQL
+- **Otros:** Docker Lector de códigos de barras (integración futura)
 
 ---
 
@@ -65,7 +65,7 @@ Desarrollar una aplicación web que permita la gestión integral de un supermerc
 
 ## Cómo Ejecutar el Proyecto
 
-### Backend - Spring Boot (Pendiente)
+### Backend - Spring Boot 
 
 cd backend
 
