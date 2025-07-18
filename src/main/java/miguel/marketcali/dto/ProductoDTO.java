@@ -1,29 +1,29 @@
 package miguel.marketcali.dto;
 
 import jakarta.validation.constraints.*;
-import lombok.Data;
+import java.math.BigDecimal;
 
-@Data
-public class ProductoDTO {
-    @NotBlank(message = "El nombre es obligatorio")
-    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
-    private String nombre;
+public record ProductoDTO(
+        @NotBlank(message = "El código de barras es obligatorio")
+        String codigoBarras,
 
-    @Size(max = 50, message = "La marca no puede exceder 50 caracteres")
-    private String marca;
+        @NotBlank(message = "El nombre es obligatorio")
+        @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
+        String nombre,
 
-    @DecimalMin(value = "0.01", message = "El precio mínimo es 0.01")
-    private double precio;
+        String marca,
 
-    @Min(value = 0, message = "La cantidad no puede ser negativa")
-    private int cantidad;
+        @NotNull(message = "El precio es obligatorio")
+        @PositiveOrZero(message = "El precio debe ser mayor o igual a cero")
+        BigDecimal precio,
 
-    @Size(max = 50, message = "La categoría no puede exceder 50 caracteres")
-    private String categoria;
+        @NotNull(message = "La cantidad es obligatoria")
+        @PositiveOrZero(message = "La cantidad debe ser mayor o igual a cero")
+        Integer cantidad,
 
-    @Size(max = 500, message = "La descripción no puede exceder 500 caracteres")
-    private String descripcion;
+        String categoria,
 
-    @Size(max = 255, message = "La URL de la imagen no puede exceder 255 caracteres")
-    private String imagen;
-}
+        String descripcion,
+
+        String imagen
+) {}
