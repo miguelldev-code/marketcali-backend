@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductoService {
@@ -15,59 +16,65 @@ public class ProductoService {
     @Autowired
     private ProductoRepository productoRepository;
 
-    // Listar productos
     public List<Producto> listarTodos() {
         return productoRepository.findAll();
     }
 
-    // Buscar por ID
     public Producto buscarPorId(Long id) {
         return productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + id));
     }
 
-    // Crear producto
+    @Transactional(readOnly = true)
+    public Optional<Producto> buscarPorCodigoBarras(String codigoBarras) {
+        return productoRepository.findByCodigoBarras(codigoBarras);
+    }
+
     @Transactional
     public Producto crearProducto(ProductoDTO productoDTO) {
+        // Verificar si el código de barras ya existe
+        if (productoRepository.existsByCodigoBarras(productoDTO.codigoBarras())) {
+            throw new RuntimeException("El código de barras ya está registrado");
+        }
+
         Producto producto = new Producto();
         mapearDTOaProducto(productoDTO, producto);
+        producto.setCodigoBarras(productoDTO.codigoBarras());
+
         return productoRepository.save(producto);
     }
 
-    // Actualizar producto
     @Transactional
     public Producto actualizarProducto(Long id, ProductoDTO productoDTO) {
         Producto producto = buscarPorId(id);
+
+        // Verificar si el nuevo código de barras ya existe (si ha cambiado)
+        if (!producto.getCodigoBarras().equals(productoDTO.codigoBarras()) &&
+                productoRepository.existsByCodigoBarras(productoDTO.codigoBarras())) {
+            throw new RuntimeException("El nuevo código de barras ya está registrado");
+        }
+
         mapearDTOaProducto(productoDTO, producto);
+        producto.setCodigoBarras(productoDTO.codigoBarras());
+
         return productoRepository.save(producto);
     }
 
-    // Eliminar producto
     @Transactional
     public void eliminarProducto(Long id) {
+        if (!productoRepository.existsById(id)) {
+            throw new RuntimeException("Producto no encontrado con ID: " + id);
+        }
         productoRepository.deleteById(id);
     }
 
-    // Listar categorías únicas
-    @Transactional(readOnly = true)
-    public List<String> listarCategoriasUnicas() {
-        return productoRepository.findDistinctCategorias();
-    }
-
-    // Listar marcas únicas
-    @Transactional(readOnly = true)
-    public List<String> listarMarcasUnicas() {
-        return productoRepository.findDistinctMarcas();
-    }
-
-    // Mapear DTO a Entidad
     private void mapearDTOaProducto(ProductoDTO dto, Producto producto) {
-        producto.setNombre(dto.getNombre());
-        producto.setMarca(dto.getMarca());
-        producto.setPrecio(dto.getPrecio());
-        producto.setCantidad(dto.getCantidad());
-        producto.setCategoria(dto.getCategoria());
-        producto.setDescripcion(dto.getDescripcion());
-        producto.setImagen(dto.getImagen());
+        producto.setNombre(dto.nombre());
+        producto.setMarca(dto.marca());
+        producto.setPrecio(dto.precio());
+        producto.setCantidad(dto.cantidad());
+        producto.setCategoria(dto.categoria());
+        producto.setDescripcion(dto.descripcion());
+        producto.setImagen(dto.imagen());
     }
 }
