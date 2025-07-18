@@ -31,30 +31,45 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.buscarPorId(id));
     }
 
-    // POST: Crear (solo ADMIN)
+    // POST: Crear nuevo producto (solo ADMIN)
     @PostMapping
-    public ResponseEntity<Producto> crearProducto(
-            @Valid @RequestBody ProductoDTO productoDTO) {
-        return new ResponseEntity<>(
-                productoService.crearProducto(productoDTO),
-                HttpStatus.CREATED
-        );
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> crearProducto(@Valid @RequestBody ProductoDTO productoDTO) {
+        try {
+            Producto nuevoProducto = productoService.crearProducto(productoDTO);
+            return new ResponseEntity<>(nuevoProducto, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     // PUT: Actualizar (solo ADMIN)
     @PutMapping("/{id}")
-    public ResponseEntity<Producto> actualizarProducto(
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> actualizarProducto(
             @PathVariable Long id,
             @Valid @RequestBody ProductoDTO productoDTO) {
-        return ResponseEntity.ok(
-                productoService.actualizarProducto(id, productoDTO)
-        );
+        try {
+            Producto productoActualizado = productoService.actualizarProducto(id, productoDTO);
+            return ResponseEntity.ok(productoActualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     // DELETE: Eliminar (solo ADMIN)
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminarProducto(@PathVariable Long id) {
         productoService.eliminarProducto(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // GET: Buscar por código de barras (público)
+    @GetMapping("/codigo/{codigoBarras}")
+    public ResponseEntity<?> buscarPorCodigoBarras(@PathVariable String codigoBarras) {
+        return productoService.buscarPorCodigoBarras(codigoBarras)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
