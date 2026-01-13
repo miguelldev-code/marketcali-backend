@@ -8,7 +8,11 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+
 @Configuration
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorsConfig {
 
     @Bean

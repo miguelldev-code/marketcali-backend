@@ -15,6 +15,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_CLOUD_GATEWAY=DEBUG
     depends_on:
       - discovery-service
 
@@ -25,6 +27,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
     depends_on:
       - discovery-service
 
@@ -36,6 +39,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/marketcali_product_db
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
     depends_on:
       - discovery-service
       - mysql-db
