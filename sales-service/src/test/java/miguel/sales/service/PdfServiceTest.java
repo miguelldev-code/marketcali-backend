@@ -5,8 +5,6 @@ import miguel.sales.model.Sale;
 import miguel.sales.model.SaleItem;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -42,7 +40,7 @@ class PdfServiceTest {
 
         // Optional: Write to file for manual inspection
         // try (FileOutputStream fos = new FileOutputStream("test_invoice.pdf")) {
-        //     fos.write(pdfBytes);
+        // fos.write(pdfBytes);
         // }
     }
 }
