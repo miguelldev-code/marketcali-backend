@@ -1,145 +1,180 @@
-# 🛒 MarketCali
+# 🛒 MarketCali - Backend System
 
-**MarketCali** es una plataforma integral de gestión para supermercados diseñada con una arquitectura de **microservicios** escalable y un frontend moderno y reactivo. El sistema permite la administración eficiente de inventarios, ventas, facturación y usuarios, proporcionando una solución robusta para el entorno retail.
-
----
-
-## 🏗️ Arquitectura del Sistema
-
-El proyecto sigue una arquitectura de microservicios basada en **Spring Cloud**, lo que permite desacoplar la lógica de negocio en servicios independientes, facilitando el mantenimiento y la escalabilidad.
-
-### Componentes Principales
-
--   **API Gateway**: Punto de entrada único para todas las peticiones del cliente. Enruta el tráfico a los servicios correspondientes (`auth-service`, `product-service`) y maneja preocupaciones transversales como CORS.
--   **Discovery Service (Eureka)**: Servidor de registro y descubrimiento de servicios, permitiendo que los microservicios se encuentren entre sí dinámicamente sin hardcodear URLs.
--   **Auth Service**: Encargado de la seguridad y gestión de usuarios. Maneja el registro, inicio de sesión y validación de credenciales (JWT).
--   **Product Service**: Gestiona el catálogo de productos, inventario y lógica relacionada con las mercancías.
--   **Config Service**: (Opcional/Futuro) Gestión centralizada de la configuración para todos los servicios.
+**MarketCali** es una plataforma de gestión para supermercados diseñada con una arquitectura de **microservicios** escalable, seguridad robusta y un frontend moderno. El sistema orquesta múltiples servicios para gestionar inventarios, ventas, autenticación y configuración centralizada.
 
 ---
 
-## 🚀 Stack Tecnológico
+## 🏗️ Arquitectura Técnica
 
-### Backend (Microservicios)
--   **Lenguaje**: Java 17
--   **Framework**: Spring Boot 3.2.5
--   **Ecosistema Cloud**: Spring Cloud 2023.0.1 (Gateway, Netflix Eureka)
--   **Base de Datos**: MySQL / PostgreSQL (Configurable por servicio)
--   **Build Tool**: Maven
+El sistema implementa una arquitectura de microservicios basada en el ecosistema **Spring Cloud**, utilizando contenedores Docker para la orquestación.
 
-### Frontend (SPA)
--   **Framework**: React 18
--   **Build Tool**: Vite
--   **Ruting**: React Router Dom
--   **Cliente HTTP**: Axios
--   **Utilidades**: 
-    -   `react-toastify` para notificaciones.
-    -   `quagga` / `@ericblade/quagga2` para escaneo de códigos de barras.
-    -   `react-icons` para iconografía.
-
----
-
-## 📋 Prerrequisitos
-
-Asegúrate de tener instalado en tu entorno:
--   **Java 17 JDK**
--   **Node.js 18+**
--   **Maven** (o usar el wrapper `mvnw` incluido)
--   **Docker** (Recomendado para bases de datos y servicios de infraestructura)
-
----
-
-## 🛠️ Instalación y Ejecución
-
-### 1. Clonar el Repositorio
-
-```bash
-git clone <url-del-repositorio>
-cd marketcali-backend
+### Diagrama de Comunicación
+```mermaid
+graph TD
+    Client[Cliente Web/Mobile] --> Gateway[API Gateway (8088)]
+    Gateway --> Auth[Auth Service (8081/8089)]
+    Gateway --> Product[Product Service (8082)]
+    Gateway --> Sales[Sales Service (8083)]
+    
+    Auth --> DB_Auth[(MySQL Auth DB)]
+    Product --> DB_Product[(MySQL Product DB)]
+    Sales --> DB_Sales[(MySQL Sales DB)]
+    
+    ServiceRegistry[Discovery Service (Eureka)] -.-> Gateway
+    ServiceRegistry -.-> Auth
+    ServiceRegistry -.-> Product
+    ServiceRegistry -.-> Sales
 ```
 
-### 2. Infraestructura Backend
+### Componentes del Sistema
 
-Para levantar el ecosistema de microservicios, se recomienda seguir este orden de inicio:
+| Servicio | Puerto (Docker/Local) | Descripción Técnica |
+| :--- | :--- | :--- |
+| **Discovery Service** | `8761` | Servidor Eureka para el registro y descubrimiento dinámico de servicios. Permite el balanceo de carga del lado del cliente. |
+| **API Gateway** | `8088` | Puerta de enlace basada en Spring Cloud Gateway. Maneja enrutamiento, CORS (`http://localhost:5173`) y seguridad perimetral. |
+| **Auth Service** | `8081` / `8089` | Implementa seguridad `Spring Security` + `JWT`. Gestiona usuarios, roles y emisión de tokens. |
+| **Product Service** | `8082` | CRUD de productos. Persistencia en MySQL (`marketcali_product_db`). |
+| **Sales Service** | `8083` | Gestión de ventas y órdenes. Persistencia en MySQL (`marketcali_sales_db`). |
+| **Config Service** | `8888` | (Opcional) Servidor de configuración centralizada para perfiles distribuidos. |
+| **MySQL Database** | `3307` -> `3306` | Contenedor único de MySQL 8.0 que aloja múltiples esquemas (`auth`, `product`, `sales`). |
 
-1.  **Discovery Service**:
-    ```bash
-    cd discovery-service
-    ./mvnw spring-boot:run
-    ```
-    *Espera a que inicie en el puerto 8761.*
+---
 
-2.  **API Gateway**:
-    ```bash
-    cd api-gateway
-    ./mvnw spring-boot:run
-    ```
-    *Inicia en el puerto 8080.*
+## 🚀 Tecnologías Clave
 
-3.  **Servicios de Negocio (Auth, Product)**:
-    Abre nuevas terminales para cada servicio:
-    ```bash
-    cd auth-service
-    ./mvnw spring-boot:run
-    ```
-    ```bash
-    cd product-service
-    ./mvnw spring-boot:run
-    ```
+### Backend
+*   **Java 17** (Eclipse Temurin)
+*   **Spring Boot 3.2.5**
+*   **Spring Cloud 2023.0.1** (Gateway, Netflix Eureka, Config)
+*   **Spring Data JPA** (Hibernate)
+*   **Spring Security** (JWT Authentication)
+*   **Lombok**
+*   **Maven**
 
-### 3. Frontend
+### Frontend
+*   **React 18**
+*   **Vite**
+*   **Axios** (Cliente HTTP)
+*   **React Router Dom**
+*   **TailwindCSS** (Estilizado)
 
-Navega al directorio del frontend e inicia el servidor de desarrollo:
+### Infraestructura
+*   **Docker & Docker Compose**
+*   **MySQL 8.0**
+
+---
+
+## ⚙️ Configuración y Variables de Entorno
+
+El proyecto utiliza `application.yml` para configuración por defecto y sobreescritura mediante variables de entorno en Docker.
+
+### Variables Principales (Docker Compose)
+Las siguientes variables se inyectan en los contenedores para la conexión entre servicios:
+
+- `EUREKA_CLIENT_SERVICEURL_DEFAULTZONE`: URL del Discovery Service (`http://discovery-service:8761/eureka/`)
+- `SPRING_DATASOURCE_URL`: Cadena de conexión JDBC (ej. `jdbc:mysql://mysql-db:3306/marketcali_product_db`)
+- `SPRING_PROFILES_ACTIVE`: Perfil activo (usualmente `docker`).
+
+### Puertos Expuestos
+- **Frontend**: `http://localhost:80` (o `5173` en dev)
+- **API Gateway**: `http://localhost:8088`
+- **Eureka Dashboard**: `http://localhost:8761`
+- **MySQL**: `localhost:3307` (Credenciales: `root` / `root` o `miguel` / `12345`)
+
+---
+
+## 🛠️ Despliegue y Ejecución
+
+### Opción A: Docker Compose (Recomendado)
+
+Levanta todo el ecosistema con un solo comando. Asegúrate de tener Docker corriendo.
 
 ```bash
-cd frontend
-npm install
-npm run dev
+docker-compose up -d --build
 ```
-La aplicación estará disponible típicamente en `http://localhost:5173`.
+
+Esto iniciará:
+1.  **MySQL** (y creará las BBDD automáticamente via `init.sql`).
+2.  **Discovery Service**.
+3.  **Config Service** (si activo).
+4.  **Microservicios de Negocio** (Auth, Product, Sales).
+5.  **API Gateway**.
+6.  **Frontend**.
+
+Accede a la aplicación en `http://localhost`.
+
+### Opción B: Ejecución Manual (Desarrollo)
+
+Si deseas correr los servicios individualmente para depuración:
+
+1.  **Infraestructura Base**:
+    ```bash
+    # Iniciar MySQL (o usar docker solo para db)
+    docker-compose up -d mysql-db
+    ```
+
+2.  **Discovery Service**:
+    ```bash
+    cd discovery-service && ./mvnw spring-boot:run
+    ```
+
+3.  **API Gateway & Servicios**:
+    Iniciar cada uno en terminales separadas:
+    ```bash
+    cd api-gateway && ./mvnw spring-boot:run
+    cd auth-service && ./mvnw spring-boot:run
+    cd product-service && ./mvnw spring-boot:run
+    cd sales-service && ./mvnw spring-boot:run
+    ```
+
+4.  **Frontend**:
+    ```bash
+    cd frontend && npm install && npm run dev
+    ```
 
 ---
 
-## 🔌 Endpoints Principales
+## 🔌 API Endpoints (Gateway: 8088)
 
-Las peticiones externas deben pasar a través del **API Gateway** (`http://localhost:8080`).
+Todas las peticiones deben dirigirse al API Gateway.
 
-### Autenticación (`/auth`)
--   `POST /auth/register`: Registrar un nuevo usuario.
--   `POST /auth/login`: Iniciar sesión y obtener token.
+### 🔐 Auth Service (`/auth`)
+*   `POST /auth/register`: Registro de usuarios.
+*   `POST /auth/login`: Autenticación y obtención de Bearer Token.
 
-### Productos (`/api/productos`)
--   `GET /api/productos`: Listar todos los productos.
--   `POST /api/productos`: Crear un nuevo producto (Requiere rol ADMIN/EMPLEADO).
--   `GET /api/productos/{id}`: Detalle de un producto.
+### 📦 Product Service (`/api/productos`)
+*   `GET /api/productos`: Listar catálogo.
+*   `POST /api/productos`: Crear producto (Rol Admin/Empleado).
+*   `PUT /api/productos/{id}`: Actualizar stock/precio.
+*   `DELETE /api/productos/{id}`: Eliminar producto.
+
+### 💰 Sales Service (`/sales` o `/api/sales`)
+*   **Nota**: Revisar prefijo configurado en Gateway.
+*   `POST /sales`: Registrar nueva venta.
+*   `GET /sales/{id}`: Obtener detalle de venta.
+*   `GET /sales/history`: Historial de ventas (por usuario/fecha).
 
 ---
 
-## 👥 Roles de Usuario
+## 👥 Gestión de Usuarios y Roles
 
-El sistema implementa un control de acceso basado en roles (RBAC):
+El sistema utiliza **RBAC** (Role-Based Access Control).
 
-| Rol           | Descripción |
+| Rol | Permisos |
 | :--- | :--- |
-| **ADMIN** | Acceso total al sistema. Gestión de usuarios, configuración y reportes avanzados. |
-| **EMPLEADO** | Gestión operativa. Ventas, inventario y facturación. |
-| **USER/CLIENTE** | Acceso limitado. Visualización de catálogo y compras propias. |
+| **ADMIN** | Acceso total. Gestión de usuarios, configuración del sistema, reportes globales. |
+| **EMPLEADO** | Gestión de inventario, registro de ventas, facturación. |
+| **CLIENTE** | Visualización de productos, carrito de compras, historial propio. |
 
 ---
 
 ## 🤝 Contribución
 
-1.  Haz un Fork del proyecto.
-2.  Crea tu rama de funcionalidad (`git checkout -b feature/AmazingFeature`).
-3.  Haz Commit de tus cambios (`git commit -m 'Add some AmazingFeature'`).
-4.  Haz Push a la rama (`git push origin feature/AmazingFeature`).
-5.  Abre un Pull Request.
+1.  Hacer Fork del repositorio.
+2.  Crear rama (`git checkout -b feature/NuevaFuncionalidad`).
+3.  Commit (`git commit -m 'Implementar X'`).
+4.  Push (`git push origin feature/NuevaFuncionalidad`).
+5.  Crear Pull Request.
 
 ---
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT - mira el archivo [LICENSE](LICENSE) para detalles.
-
----
-**Desarrollado con ❤️ por Miguel Ángel Ortiz Escobar**
+**Desarrollado para MarketCali**
