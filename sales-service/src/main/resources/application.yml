@@ -1,14 +1,13 @@
 server:
-  port: 8089
+  port: 8083
 
 spring:
   application:
-    name: auth-service
+    name: sales-service
   datasource:
-    url: jdbc:mysql://mysql-db:3306/marketcali_auth_db
+    url: jdbc:mysql://mysql-db:3306/marketcali_sales_db
     username: miguel
     password: 12345
-    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -20,6 +19,4 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    prefer-ip-address: true
+      defaultZone: http://discovery-service:8761/eureka/

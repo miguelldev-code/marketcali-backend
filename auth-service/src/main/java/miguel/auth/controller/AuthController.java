@@ -42,4 +42,15 @@ public class AuthController {
         }
         return ResponseEntity.status(401).body("Token inválido");
     }
+
+    @GetMapping("/users")
+    public ResponseEntity<?> getAllUsers() {
+        return ResponseEntity.ok(authService.getAllUsers());
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        authService.deleteUser(id);
+        return ResponseEntity.ok("Usuario eliminado");
+    }
 }

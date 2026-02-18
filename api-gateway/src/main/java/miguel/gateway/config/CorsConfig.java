@@ -19,7 +19,7 @@ public class CorsConfig {
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
         // Allow specific origin
-        corsConfig.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+        corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost"));
         corsConfig.setMaxAge(3600L);
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(Collections.singletonList("*"));

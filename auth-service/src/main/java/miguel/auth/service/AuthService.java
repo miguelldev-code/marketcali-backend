@@ -37,4 +37,12 @@ public class AuthService {
     public Optional<Usuario> findByUsername(String username) {
         return usuarioRepository.findByUsername(username);
     }
+
+    public Iterable<Usuario> getAllUsers() {
+        return usuarioRepository.findAll();
+    }
+
+    public void deleteUser(Long id) {
+        usuarioRepository.deleteById(id);
+    }
 }
